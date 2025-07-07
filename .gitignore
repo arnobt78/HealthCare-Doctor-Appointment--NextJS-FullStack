@@ -38,4 +38,5 @@ next-env.d.ts
 # Sentry Config File
 .env.sentry-build-plugin
 
+# Local backup files
 _local_backup

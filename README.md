@@ -1,4 +1,4 @@
-# HealthCare Doctor Appointment Featuring Admin Dashboard Notifications (Approve/Decline) - Next.js
+# HealthCare Doctor Appointment Featuring Admin Dashboard Notifications (Approve/Decline) - Next.js Web Application
 
 This repository contains a Next.js application for managing healthcare appointments, patient data, and notifications. It features a user-friendly interface for patients and an admin dashboard for appointment management, with SMS notifications powered by Twilio and file storage using Appwrite.
 

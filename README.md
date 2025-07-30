@@ -19,7 +19,7 @@ It is a comprehensive solution for clinics and hospitals to manage patient data,
 - Performance/error monitoring with Sentry
 - Responsive design for all devices
 
-- **Live Demo:** [https://healthcare-arnob.vercel.app/](https://healthcare-arnob.vercel.app/)
+**Live Demo:** [https://healthcare-arnob.vercel.app/](https://healthcare-arnob.vercel.app/)
 
 ---
 

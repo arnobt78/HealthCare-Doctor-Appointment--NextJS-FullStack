@@ -1,5 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 import clsx from "clsx";
-import Image from "next/image";
+// Replaced next/image with native img for Vercel quota
 
 import { StatusIcon } from "@/constants";
 
@@ -12,12 +13,14 @@ export const StatusBadge = ({ status }: { status: Status }) => {
         "bg-red-600": status === "cancelled",
       })}
     >
-      <Image
+      <img
         src={StatusIcon[status]}
         alt="doctor"
         width={24}
         height={24}
         className="h-fit w-3"
+        loading="lazy"
+        decoding="async"
       />
       <p
         className={clsx("text-12-semibold capitalize", {

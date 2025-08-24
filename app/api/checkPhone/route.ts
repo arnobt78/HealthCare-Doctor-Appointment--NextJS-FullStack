@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Query } from "node-appwrite";
+
 import {
   databases,
   NEXT_PUBLIC_DATABASE_ID,
   NEXT_PUBLIC_PATIENT_COLLECTION_ID,
 } from "@/lib/appwrite.config";
-import { Query } from "node-appwrite";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

@@ -1,33 +1,20 @@
-// import { z } from "zod";
-
-// export const UserFormValidation = z.object({
-//   name: z
-//     .string()
-//     .min(2, "Name must be at least 2 characters")
-//     .max(50, "Name must be at most 50 characters"),
-//   email: z.string().email("Invalid email address"),
-//   phone: z
-//     .string()
-//     .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
-// });
-
 import { z } from "zod";
 
 const checkEmailExists = async (email: string) => {
-  console.log(`Checking email: ${email}`);
+  // console.log(`Checking email: ${email}`);
   const response = await fetch(`/api/checkEmail?email=${email}`);
   const data = await response.json();
-  console.log(`Email exists: ${data.exists}`);
+  // console.log(`Email exists: ${data.exists}`);
   return data.exists;
 };
 
-const checkPhoneExists = async (phone: string) => {
-  console.log(`Checking phone: ${phone}`);
-  const response = await fetch(`/api/checkPhone?phone=${phone}`);
-  const data = await response.json();
-  console.log(`Phone exists: ${data.exists}`);
-  return data.exists;
-};
+// const checkPhoneExists = async (phone: string) => {
+//   // console.log(`Checking phone: ${phone}`);
+//   const response = await fetch(`/api/checkPhone?phone=${phone}`);
+//   const data = await response.json();
+//   // console.log(`Phone exists: ${data.exists}`);
+//   return data.exists;
+// };
 
 export const UserFormValidation = z.object({
   name: z
@@ -40,26 +27,26 @@ export const UserFormValidation = z.object({
     .refine(
       async (email) => {
         const exists = await checkEmailExists(email);
-        console.log(`Email validation result: ${exists}`);
         return !exists;
       },
       {
-        message: "Email already exists",
+        message:
+          "Email already exists. Please use the 'Returning Patient?' button.",
       }
     ),
   phone: z
     .string()
-    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number")
-    .refine(
-      async (phone) => {
-        const exists = await checkPhoneExists(phone);
-        console.log(`Phone validation result: ${exists}`);
-        return !exists;
-      },
-      {
-        message: "Phone number already exists",
-      }
-    ),
+    .refine((phone) => /^\+\d{10,15}$/.test(phone), "Invalid phone number"),
+  // .refine(
+  //   async (phone) => {
+  //     const exists = await checkPhoneExists(phone);
+  //     return !exists;
+  //   },
+  //   {
+  //     message:
+  //       "Phone number already exists. Please use the 'Returning Patient?' button.",
+  //   }
+  // )
 });
 
 //

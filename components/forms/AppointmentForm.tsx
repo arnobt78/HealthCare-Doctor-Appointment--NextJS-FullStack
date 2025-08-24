@@ -1,9 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,7 +21,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { Form } from "../ui/form";
-import React from "react";
 
 export const AppointmentForm = ({
   userId,
@@ -29,12 +28,14 @@ export const AppointmentForm = ({
   type = "create",
   appointment,
   setOpen,
+  reloadAppointments,
 }: {
   userId: string;
   patientId: string;
   type: "create" | "schedule" | "cancel";
   appointment?: Appointment;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  reloadAppointments?: () => void;
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -92,17 +93,18 @@ export const AppointmentForm = ({
           );
         }
       } else {
+        // Always include status for cancel
         const appointmentToUpdate = {
           userId,
           appointmentId: appointment?.$id!,
           appointment: {
             primaryPhysician: values.primaryPhysician,
             schedule: new Date(values.schedule),
-            status: status as Status,
+            status: (type === "cancel" ? "cancelled" : status) as Status,
             cancellationReason: values.cancellationReason,
           },
           type,
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Add the timeZone value
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         };
 
         const updatedAppointment = await updateAppointment(appointmentToUpdate);
@@ -110,6 +112,7 @@ export const AppointmentForm = ({
         if (updatedAppointment) {
           setOpen && setOpen(false);
           form.reset();
+          reloadAppointments && reloadAppointments();
         }
       }
     } catch (error) {
@@ -135,7 +138,7 @@ export const AppointmentForm = ({
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-6">
         {type === "create" && (
           <section className="mb-12 space-y-4">
-            <h1 className="header">New Appointment</h1>
+            <h1 className="header text-dark-700">New Appointment</h1>
             <p className="text-dark-700">
               Request a new appointment in 10 seconds.
             </p>
@@ -154,12 +157,14 @@ export const AppointmentForm = ({
               {Doctors.map((doctor, i) => (
                 <SelectItem key={doctor.name + i} value={doctor.name}>
                   <div className="flex cursor-pointer items-center gap-2">
-                    <Image
+                    <img
                       src={doctor.image}
                       width={32}
                       height={32}
                       alt="doctor"
                       className="rounded-full border border-dark-500"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <p>{doctor.name}</p>
                   </div>
@@ -212,9 +217,22 @@ export const AppointmentForm = ({
 
         <SubmitButton
           isLoading={isLoading}
-          className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}
+          className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
+          loadingText={
+            type === "cancel"
+              ? "Cancelling..."
+              : type === "schedule"
+                ? "Scheduling..."
+                : "Continuing..."
+          }
         >
-          {buttonLabel}
+          {isLoading
+            ? type === "cancel"
+              ? "Cancelling..."
+              : type === "schedule"
+                ? "Scheduling..."
+                : "Continuing..."
+            : buttonLabel}
         </SubmitButton>
       </form>
     </Form>

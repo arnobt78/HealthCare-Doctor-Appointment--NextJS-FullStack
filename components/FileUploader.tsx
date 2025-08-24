@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import Image from "next/image";
+// Replaced next/image with native img for Vercel quota
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -12,9 +13,12 @@ type FileUploaderProps = {
 };
 
 export const FileUploader = ({ files, onChange }: FileUploaderProps) => {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    onChange(acceptedFiles);
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      onChange(acceptedFiles);
+    },
+    [onChange]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -22,20 +26,24 @@ export const FileUploader = ({ files, onChange }: FileUploaderProps) => {
     <div {...getRootProps()} className="file-upload">
       <input {...getInputProps()} />
       {files && files?.length > 0 ? (
-        <Image
+        <img
           src={convertFileToUrl(files[0])}
           width={1000}
           height={1000}
           alt="uploaded image"
           className="max-h-[400px] overflow-hidden object-cover"
+          loading="eager"
+          decoding="async"
         />
       ) : (
         <>
-          <Image
+          <img
             src="/assets/icons/upload.svg"
             width={40}
             height={40}
             alt="upload"
+            loading="lazy"
+            decoding="async"
           />
           <div className="file-upload_label">
             <p className="text-14-regular ">

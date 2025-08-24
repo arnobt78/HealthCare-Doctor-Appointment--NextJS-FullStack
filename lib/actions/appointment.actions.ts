@@ -139,6 +139,11 @@ export const updateAppointment = async ({
   type,
 }: UpdateAppointmentParams) => {
   try {
+    if (!appointmentId) {
+      throw new Error(
+        "updateAppointment called without a valid appointmentId (documentId). Check your frontend logic."
+      );
+    }
     // Update appointment to scheduled -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#updateDocument
     const updatedAppointment = await databases.updateDocument(
       NEXT_PUBLIC_DATABASE_ID!,

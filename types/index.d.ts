@@ -18,6 +18,7 @@ declare interface User extends CreateUserParams {
 }
 
 declare interface RegisterUserParams extends CreateUserParams {
+  $id?: string; // Allow updates for existing patients
   userId: string;
   birthDate: Date;
   gender: Gender;

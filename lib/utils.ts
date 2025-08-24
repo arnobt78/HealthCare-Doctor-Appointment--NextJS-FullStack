@@ -5,7 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
+export const parseStringify = (value: any) => {
+  if (value === undefined || value === null || value === "undefined")
+    return null;
+  return JSON.parse(JSON.stringify(value));
+};
 
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
@@ -22,7 +26,7 @@ export const formatDateTime = (
     hour: "numeric", // numeric hour (e.g., '8')
     minute: "numeric", // numeric minute (e.g., '30')
     hour12: true, // use 12-hour clock (true) or 24-hour clock (false),
-    timeZone: timeZone, // use the provided timezone
+    timeZone, // use the provided timezone
   };
 
   const dateDayOptions: Intl.DateTimeFormatOptions = {
@@ -30,21 +34,21 @@ export const formatDateTime = (
     year: "numeric", // numeric year (e.g., '2023')
     month: "2-digit", // abbreviated month name (e.g., 'Oct')
     day: "2-digit", // numeric day of the month (e.g., '25')
-    timeZone: timeZone, // use the provided timezone
+    timeZone, // use the provided timezone
   };
 
   const dateOptions: Intl.DateTimeFormatOptions = {
     month: "short", // abbreviated month name (e.g., 'Oct')
     year: "numeric", // numeric year (e.g., '2023')
     day: "numeric", // numeric day of the month (e.g., '25')
-    timeZone: timeZone, // use the provided timezone
+    timeZone, // use the provided timezone
   };
 
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: "numeric", // numeric hour (e.g., '8')
     minute: "numeric", // numeric minute (e.g., '30')
     hour12: true, // use 12-hour clock (true) or 24-hour clock (false)
-    timeZone: timeZone, // use the provided timezone
+    timeZone, // use the provided timezone
   };
 
   const formattedDateTime: string = new Date(dateString).toLocaleString(

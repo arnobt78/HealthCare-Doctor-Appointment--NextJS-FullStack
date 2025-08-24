@@ -1,12 +1,14 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
+// Replaced next/image with native img for Vercel quota
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+// import loading from "@/app/loading";
 import { Form, FormControl } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -26,22 +28,51 @@ import CustomFormField, { FormFieldType } from "../CustomFormField";
 import { FileUploader } from "../FileUploader";
 import SubmitButton from "../SubmitButton";
 
-const RegisterForm = ({ user }: { user: User }) => {
+interface RegisterFormProps {
+  user: User;
+  patient?: any;
+}
+
+const RegisterForm = ({ user, patient }: RegisterFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
     defaultValues: {
       ...PatientFormDefaultValues,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
+      ...(patient || {}),
+      name: (patient && patient.name) || user.name,
+      email: (patient && patient.email) || user.email,
+      phone: (patient && patient.phone) || user.phone,
+      // Ensure all consent checkboxes are always present in form state
+      treatmentConsent:
+        patient && typeof patient.treatmentConsent === "boolean"
+          ? patient.treatmentConsent
+          : false,
+      disclosureConsent:
+        patient && typeof patient.disclosureConsent === "boolean"
+          ? patient.disclosureConsent
+          : false,
+      privacyConsent:
+        patient && typeof patient.privacyConsent === "boolean"
+          ? patient.privacyConsent
+          : false,
     },
   });
 
+  if (!user) {
+    return (
+      <div className="flex h-full items-center justify-center text-red-500">
+        User not found. Please contact support.
+      </div>
+    );
+  }
+
   const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
     setIsLoading(true);
+    setErrorMessage(null);
 
     // Store file info in form data as
     let formData;
@@ -59,7 +90,7 @@ const RegisterForm = ({ user }: { user: User }) => {
     }
 
     try {
-      const patient = {
+      const patientPayload = {
         userId: user.$id,
         name: values.name,
         email: values.email,
@@ -85,12 +116,28 @@ const RegisterForm = ({ user }: { user: User }) => {
         privacyConsent: values.privacyConsent,
       };
 
-      const newPatient = await registerPatient(patient);
+      // If patient exists, update, else register
+      let newPatient;
+      if (patient && patient.$id) {
+        newPatient = await registerPatient({
+          ...patientPayload,
+          $id: patient.$id,
+        });
+      } else {
+        newPatient = await registerPatient(patientPayload);
+      }
 
       if (newPatient) {
         router.push(`/patients/${user.$id}/new-appointment`);
+      } else {
+        setErrorMessage(
+          "Registration failed. Please try again or contact support."
+        );
       }
-    } catch (error) {
+    } catch (error: any) {
+      let message = "Registration failed. Please try again or contact support.";
+      if (error?.message) message = error.message;
+      setErrorMessage(message);
       console.log(error);
     }
 
@@ -104,13 +151,18 @@ const RegisterForm = ({ user }: { user: User }) => {
         className="flex-1 space-y-12"
       >
         <section className="space-y-4">
-          <h1 className="header">Welcome 👋</h1>
+          <h1 className="header text-dark-700">Welcome 👋</h1>
           <p className="text-dark-700">Let us know more about yourself.</p>
+          {errorMessage && (
+            <div className="mt-4 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMessage}
+            </div>
+          )}
         </section>
 
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Personal Information</h2>
+            <h2 className="sub-header text-dark-700">Personal Information</h2>
           </div>
 
           {/* NAME */}
@@ -167,9 +219,12 @@ const RegisterForm = ({ user }: { user: User }) => {
                     defaultValue={field.value}
                   >
                     {GenderOptions.map((option, i) => (
-                      <div key={option + i} className="radio-group">
+                      <div key={option + i} className="radio-group text-white">
                         <RadioGroupItem value={option} id={option} />
-                        <Label htmlFor={option} className="cursor-pointer">
+                        <Label
+                          htmlFor={option}
+                          className="cursor-pointer text-white"
+                        >
                           {option}
                         </Label>
                       </div>
@@ -221,7 +276,7 @@ const RegisterForm = ({ user }: { user: User }) => {
 
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Medical Information</h2>
+            <h2 className="sub-header text-dark-700">Medical Information</h2>
           </div>
 
           {/* PRIMARY CARE PHYSICIAN */}
@@ -235,12 +290,14 @@ const RegisterForm = ({ user }: { user: User }) => {
             {Doctors.map((doctor, i) => (
               <SelectItem key={doctor.name + i} value={doctor.name}>
                 <div className="flex cursor-pointer items-center gap-2">
-                  <Image
+                  <img
                     src={doctor.image}
                     width={32}
                     height={32}
                     alt="doctor"
                     className="rounded-full border border-dark-500"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <p>{doctor.name}</p>
                 </div>
@@ -308,7 +365,9 @@ const RegisterForm = ({ user }: { user: User }) => {
 
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Identification and Verfication</h2>
+            <h2 className="sub-header text-dark-700">
+              Identification and Verfication
+            </h2>
           </div>
 
           <CustomFormField
@@ -339,16 +398,48 @@ const RegisterForm = ({ user }: { user: User }) => {
             name="identificationDocument"
             label="Scanned Copy of Identification Document"
             renderSkeleton={(field) => (
-              <FormControl>
-                <FileUploader files={field.value} onChange={field.onChange} />
-              </FormControl>
+              <>
+                <FormControl>
+                  <FileUploader files={field.value} onChange={field.onChange} />
+                </FormControl>
+                {/* Show previously uploaded document if available and no new file is selected */}
+                {patient?.identificationDocumentUrl &&
+                  (!field.value || field.value.length === 0) && (
+                    <div className="mt-4 flex flex-col items-start gap-2">
+                      <span className="text-xs text-dark-600">
+                        Previously uploaded document:
+                      </span>
+                      <img
+                        src={patient.identificationDocumentUrl}
+                        alt="Uploaded identification document"
+                        className="max-h-60 rounded border border-gray-300 object-contain shadow"
+                        style={{
+                          maxWidth: "100%",
+                          width: "auto",
+                          height: "auto",
+                        }}
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.style.display = "none";
+                          const msg = document.createElement("div");
+                          msg.textContent =
+                            "Document not found or no longer available.";
+                          msg.className = "text-xs text-red-500 mt-2";
+                          e.currentTarget.parentNode?.appendChild(msg);
+                        }}
+                      />
+                    </div>
+                  )}
+              </>
             )}
           />
         </section>
 
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Consent and Privacy</h2>
+            <h2 className="sub-header text-dark-700">Consent and Privacy</h2>
           </div>
 
           <CustomFormField
@@ -375,7 +466,13 @@ const RegisterForm = ({ user }: { user: User }) => {
           />
         </section>
 
-        <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
+        <SubmitButton
+          isLoading={isLoading}
+          loadingText="Continuing..."
+          className={`shad-primary-btn w-full${isLoading ? " cursor-not-allowed opacity-50" : ""}`}
+        >
+          {isLoading ? "Continuing..." : "Submit and Continue"}
+        </SubmitButton>
       </form>
     </Form>
   );

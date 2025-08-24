@@ -1,13 +1,14 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
+// import Image from "next/image";
 
 export default function Loading() {
   return (
     <div className="flex-center size-full h-screen gap-3 text-white">
-      <Image
+      <img
         src="/assets/icons/loader.svg"
         alt="loader"
         width={40}
-        height={3240}
+        height="auto"
         className="animate-spin"
       />
       Loading...

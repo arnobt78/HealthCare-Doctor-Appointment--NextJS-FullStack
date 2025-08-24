@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable no-unused-vars */
 import { E164Number } from "libphonenumber-js/core";
-import Image from "next/image";
+// Replaced next/image with native img for Vercel quota
 import ReactDatePicker from "react-datepicker";
 import { Control } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
@@ -48,19 +49,21 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
       return (
         <div className="flex rounded-md border border-dark-500 bg-dark-400">
           {props.iconSrc && (
-            <Image
+            <img
               src={props.iconSrc}
-              height={24}
               width={24}
+              height={24}
               alt={props.iconAlt || "icon"}
-              className="ml-2"
+              className="ml-2 size-6"
+              loading="lazy"
+              decoding="async"
             />
           )}
           <FormControl>
             <Input
               placeholder={props.placeholder}
               {...field}
-              className="shad-input border-0"
+              className="shad-input border-0 text-white"
             />
           </FormControl>
         </div>
@@ -71,7 +74,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
           <Textarea
             placeholder={props.placeholder}
             {...field}
-            className="shad-textArea"
+            className="shad-textArea text-white"
             disabled={props.disabled}
           />
         </FormControl>
@@ -86,20 +89,24 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             withCountryCallingCode
             value={field.value as E164Number | undefined}
             onChange={field.onChange}
-            className="input-phone"
+            className="input-phone text-white"
           />
         </FormControl>
       );
     case FormFieldType.CHECKBOX:
       return (
         <FormControl>
-          <div className="flex items-center gap-4">
+          <div className="flex items-start gap-3">
             <Checkbox
               id={props.name}
               checked={field.value}
               onCheckedChange={field.onChange}
             />
-            <label htmlFor={props.name} className="checkbox-label">
+            <label
+              htmlFor={props.name}
+              className="checkbox-label flex-1 cursor-pointer select-none text-left text-base leading-snug"
+              style={{ wordBreak: "break-word" }}
+            >
               {props.label}
             </label>
           </div>
@@ -108,12 +115,14 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
     case FormFieldType.DATE_PICKER:
       return (
         <div className="flex rounded-md border border-dark-500 bg-dark-400">
-          <Image
+          <img
             src="/assets/icons/calendar.svg"
-            height={24}
             width={24}
+            height={24}
             alt="user"
-            className="ml-2"
+            className="ml-2 size-6 text-white"
+            loading="lazy"
+            decoding="async"
           />
           <FormControl>
             <ReactDatePicker
@@ -122,7 +131,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               onChange={(date: Date) => field.onChange(date)}
               timeInputLabel="Time:"
               dateFormat={props.dateFormat ?? "MM/dd/yyyy"}
-              wrapperClassName="date-picker"
+              wrapperClassName="date-picker text-white"
             />
           </FormControl>
         </div>
@@ -132,11 +141,11 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
         <FormControl>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
-              <SelectTrigger className="shad-select-trigger">
+              <SelectTrigger className="shad-select-trigger text-white">
                 <SelectValue placeholder={props.placeholder} />
               </SelectTrigger>
             </FormControl>
-            <SelectContent className="shad-select-content">
+            <SelectContent className="shad-select-content text-white">
               {props.children}
             </SelectContent>
           </Select>

@@ -14,7 +14,6 @@ import {
 import { Appointment } from "@/types/appwrite.types";
 
 import { AppointmentForm } from "./forms/AppointmentForm";
-
 import "react-datepicker/dist/react-datepicker.css";
 
 export const AppointmentModal = ({
@@ -22,6 +21,9 @@ export const AppointmentModal = ({
   userId,
   appointment,
   type,
+  title,
+  description,
+  reloadAppointments,
 }: {
   patientId: string;
   userId: string;
@@ -29,6 +31,7 @@ export const AppointmentModal = ({
   type: "schedule" | "cancel";
   title: string;
   description: string;
+  reloadAppointments?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -44,18 +47,18 @@ export const AppointmentModal = ({
       </DialogTrigger>
       <DialogContent className="shad-dialog sm:max-w-md">
         <DialogHeader className="mb-4 space-y-3">
-          <DialogTitle className="capitalize">{type} Appointment</DialogTitle>
-          <DialogDescription>
-            Please fill in the following details to {type} appointment
-          </DialogDescription>
+          <DialogTitle className="capitalize text-dark-700">
+            {type} Appointment
+          </DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
         <AppointmentForm
           userId={userId}
           patientId={patientId}
           type={type}
           appointment={appointment}
           setOpen={setOpen}
+          reloadAppointments={reloadAppointments}
         />
       </DialogContent>
     </Dialog>

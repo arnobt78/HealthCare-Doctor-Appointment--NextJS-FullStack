@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+
 import { databases } from "@/lib/appwrite.config";
 
 export default async function handler(

@@ -35,6 +35,7 @@ interface CustomProps {
   placeholder?: string;
   iconSrc?: string;
   iconAlt?: string;
+  iconClassName?: string;
   disabled?: boolean;
   dateFormat?: string;
   showTimeSelect?: boolean;
@@ -54,7 +55,9 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               width={24}
               height={24}
               alt={props.iconAlt || "icon"}
-              className="ml-2 size-6"
+              className={
+                props.iconClassName ? props.iconClassName : "ml-2 size-6"
+              }
               loading="lazy"
               decoding="async"
             />
@@ -120,7 +123,11 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             width={24}
             height={24}
             alt="user"
-            className="ml-2 size-6 text-white"
+            className={
+              props.iconClassName
+                ? props.iconClassName
+                : "ml-2 size-6 text-white"
+            }
             loading="lazy"
             decoding="async"
           />

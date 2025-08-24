@@ -174,6 +174,7 @@ const RegisterForm = ({ user, patient }: RegisterFormProps) => {
             placeholder="John Doe"
             iconSrc="/assets/icons/user.svg"
             iconAlt="user"
+            iconClassName="mx-2 my-auto flex items-center justify-center"
           />
 
           {/* EMAIL & PHONE */}
@@ -186,6 +187,7 @@ const RegisterForm = ({ user, patient }: RegisterFormProps) => {
               placeholder="johndoe@gmail.com"
               iconSrc="/assets/icons/email.svg"
               iconAlt="email"
+              iconClassName="mx-2 my-auto flex items-center justify-center"
             />
 
             <CustomFormField
@@ -194,6 +196,7 @@ const RegisterForm = ({ user, patient }: RegisterFormProps) => {
               name="phone"
               label="Phone Number"
               placeholder="(555) 123-4567"
+              iconClassName="mx-2 my-auto flex items-center justify-center"
             />
           </div>
 
@@ -204,6 +207,7 @@ const RegisterForm = ({ user, patient }: RegisterFormProps) => {
               control={form.control}
               name="birthDate"
               label="Date of birth"
+              iconClassName="mx-2 my-auto flex items-center justify-center"
             />
 
             <CustomFormField

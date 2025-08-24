@@ -179,6 +179,7 @@ export const AppointmentForm = ({
               label="Expected appointment date"
               showTimeSelect
               dateFormat="MM/dd/yyyy  -  h:mm aa"
+              iconClassName="mx-2 my-auto flex items-center justify-center"
             />
 
             <div

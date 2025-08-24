@@ -84,6 +84,7 @@ export const PatientForm = () => {
           placeholder="John Doe"
           iconSrc="/assets/icons/user.svg"
           iconAlt="user"
+          iconClassName="mx-2 my-auto flex items-center justify-center"
         />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
@@ -93,6 +94,7 @@ export const PatientForm = () => {
           placeholder="johndoe@gmail.com"
           iconSrc="/assets/icons/email.svg"
           iconAlt="email"
+          iconClassName="mx-2 my-auto flex items-center justify-center"
         />
         <CustomFormField
           fieldType={FormFieldType.PHONE_INPUT}
